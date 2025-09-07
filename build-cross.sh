@@ -99,7 +99,8 @@ fi
 # Build using Make with cross-compilation
 echo "Building with Make..."
 make PLATFORM=windows ARCH="$TARGET_ARCH" BUILD_TYPE="$BUILD_TYPE" clean-current
-make PLATFORM=windows ARCH="$TARGET_ARCH" BUILD_TYPE="$BUILD_TYPE" CC="$CROSS_CC" CXX="$CROSS_CXX" CXXFLAGS="-std=c++17 -Wall -Wextra $CXXFLAGS"
+# Do not override CXXFLAGS so default '-Iinclude' from Makefile is preserved
+make PLATFORM=windows ARCH="$TARGET_ARCH" BUILD_TYPE="$BUILD_TYPE" CC="$CROSS_CC" CXX="$CROSS_CXX"
 
 if [ $? -eq 0 ]; then
     echo ""

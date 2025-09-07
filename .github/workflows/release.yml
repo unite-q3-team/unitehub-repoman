@@ -16,12 +16,11 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential make
+          sudo apt-get install -y build-essential
 
-      - name: Build (Linux x64 Release)
+      - name: Build (Linux x64 Release) via Make
         run: |
-          chmod +x *.sh
-          ./build.sh release
+          make PLATFORM=linux ARCH=x64 BUILD_TYPE=Release
 
       - name: Prepare artifact
         run: |
@@ -47,10 +46,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mingw-w64 make
 
-      - name: Build (Windows x64 Release)
+      - name: Build (Windows x64 Release) via Make (cross)
         run: |
-          chmod +x *.sh
-          ./build-cross.sh release x64
+          make PLATFORM=windows ARCH=x64 BUILD_TYPE=Release CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++
 
       - name: Prepare artifact
         run: |
