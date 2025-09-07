@@ -14,6 +14,10 @@ https://t.me/q3unite
 ### IMPORTANT: ASCII-only paths
 - Program supports only ASCII file and directory names. Unicode (e.g., Cyrillic) in file names or paths is not supported and will lead to corrupted paths and indexing failures.
 
+### Download
+
+https://github.com/unite-q3-team/unitehub-repoman/releases
+
 ## Requirements
 
 ### Build (Linux)
