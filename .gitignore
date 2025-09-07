@@ -1,0 +1,54 @@
+# Build outputs
+/build/
+build/
+
+# Compiled object files and libraries
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# Executables
+*.exe
+*.out
+
+# Logs and runtime artifacts
+*.log
+*.pid
+
+# Archives
+*.zip
+*.tar
+*.gz
+*.7z
+
+# Temporary files and caches
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# Editor/OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE settings
+.vscode/
+.idea/
+.vs/
+
+# CLI runtime scratch files (safe to ignore if they appear)
+gh_*.json
+gh_*.code
+ziptmp_*/
+pull_unzip_tmp/
+gh_create_body.json
+gh_update_body.json
+gh_user_check.json
+/build
