@@ -140,7 +140,7 @@ GUI_LDLIBS := -lglfw -lGL -ldl -lpthread -lX11 -lXrandr -lXi -lXcursor -lXineram
 endif
 
 GUI_CPP_OBJECTS := $(GUI_CPP_SOURCES:src/gui/%.cpp=$(BUILD_DIR)/gui/%.o)
-GUI_VENDOR_OBJECTS := $(GUI_VENDOR_SOURCES:%=$(BUILD_DIR)/vendor/%.o) $(BUILD_DIR)/vendor/third_party/stb_image.o
+GUI_VENDOR_OBJECTS := $(patsubst %.cpp,$(BUILD_DIR)/vendor/%.o,$(GUI_VENDOR_SOURCES)) $(BUILD_DIR)/vendor/third_party/stb_image.o
 GUI_OBJECTS := $(GUI_CPP_OBJECTS) $(GUI_VENDOR_OBJECTS)
 GUI_TARGET := $(BUILD_DIR)/$(GUI_EXECUTABLE)
 GUI_DEPS := $(GUI_OBJECTS:.o=.d)
@@ -178,7 +178,13 @@ $(BUILD_DIR)/gui/%.o: src/gui/%.cpp | $(BUILD_DIR)
 $(BUILD_DIR)/gui/main_gui.o: $(FONT_HEADERS) $(ASSET_HEADERS)
 
 # Vendor ImGui objects
-$(BUILD_DIR)/vendor/%.o: % | $(BUILD_DIR) imgui_fetch
+# Map core ImGui sources
+$(BUILD_DIR)/vendor/third_party/imgui/%.o: $(IMGUIDIR)/%.cpp | $(BUILD_DIR) imgui_fetch
+	@$(MKDIR) $(dir $@)
+	$(CXX) $(CXXFLAGS) -Iinclude -I$(IMGUIDIR) -I$(IMGUIDIR)/backends -c $< -o $@
+
+# Map backend sources
+$(BUILD_DIR)/vendor/third_party/imgui/backends/%.o: $(IMGUIDIR)/backends/%.cpp | $(BUILD_DIR) imgui_fetch
 	@$(MKDIR) $(dir $@)
 	$(CXX) $(CXXFLAGS) -Iinclude -I$(IMGUIDIR) -I$(IMGUIDIR)/backends -c $< -o $@
 
