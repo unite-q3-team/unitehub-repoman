@@ -1,3 +1,5 @@
+[![Release binaries](https://github.com/unite-q3-team/unitehub-repoman/actions/workflows/release.yml/badge.svg)](https://github.com/unite-q3-team/unitehub-repoman/actions/workflows/release.yml)
+
 ## RepoMan CLI/GUI (v0.1.0)
 
 Cross-platform C++ CLI to manage Quake 3 content repositories.
