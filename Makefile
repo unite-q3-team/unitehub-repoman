@@ -140,7 +140,15 @@ GUI_LDLIBS := -lglfw -lGL -ldl -lpthread -lX11 -lXrandr -lXi -lXcursor -lXineram
 endif
 
 GUI_CPP_OBJECTS := $(GUI_CPP_SOURCES:src/gui/%.cpp=$(BUILD_DIR)/gui/%.o)
-GUI_VENDOR_OBJECTS := $(GUI_VENDOR_SOURCES:third_party/%.cpp=$(BUILD_DIR)/vendor/third_party/%.o) $(BUILD_DIR)/vendor/third_party/stb_image.o
+# Convert ImGui core sources to object files
+IMGUI_CORE_OBJECTS := $(IMGUI_CORE:$(IMGUIDIR)/%.cpp=$(BUILD_DIR)/vendor/third_party/imgui/%.o)
+# Convert ImGui backend sources to object files  
+ifeq ($(PLATFORM),windows)
+IMGUI_BACKEND_OBJECTS := $(IMGUI_BACKENDS_WINDOWS:$(IMGUIDIR)/backends/%.cpp=$(BUILD_DIR)/vendor/third_party/imgui/backends/%.o)
+else
+IMGUI_BACKEND_OBJECTS := $(IMGUI_BACKENDS_LINUX:$(IMGUIDIR)/backends/%.cpp=$(BUILD_DIR)/vendor/third_party/imgui/backends/%.o)
+endif
+GUI_VENDOR_OBJECTS := $(IMGUI_CORE_OBJECTS) $(IMGUI_BACKEND_OBJECTS) $(BUILD_DIR)/vendor/third_party/stb_image.o
 GUI_OBJECTS := $(GUI_CPP_OBJECTS) $(GUI_VENDOR_OBJECTS)
 GUI_TARGET := $(BUILD_DIR)/$(GUI_EXECUTABLE)
 GUI_DEPS := $(GUI_OBJECTS:.o=.d)
