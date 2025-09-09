@@ -40,6 +40,17 @@ public:
     // Rename item by ID
     bool renameItem(const std::string& itemId, const std::string& newName);
 
+    // Move item's file and update its relative path in the index
+    // newRelativePath is relative to the repo root; directories will be created as needed
+    bool moveItem(const std::string& itemId, const std::string& newRelativePath);
+
+    // Update item metadata fields
+    bool updateItemMetadata(const std::string& itemId,
+                            const std::string& newName,
+                            const std::string& newDescription,
+                            const std::string& newAuthor,
+                            const std::vector<std::string>& newTags);
+
     const RepoIndex& index() const { return indexData; }
     RepoIndex& index() { return indexData; }
 

@@ -854,6 +854,19 @@ int runCommand(int argc, char** argv) {
         }
 
         // Prepare git repo: ensure branch checked out, remote set, integrate upstream, then commit and push
+        // Set local identity to avoid leaking host username/hostname
+        {
+            std::string ghUser = config::Config::getInstance().getGithubUser();
+            if (ghUser.empty()) ghUser = "github-user";
+            // Keep header local to this TU to avoid extra deps
+            const char* appName = "RepoMan";
+            const char* appVersion = "0.0.2";
+            std::string appSig = std::string(appName) + "/" + appVersion;
+            std::string cfgName = std::string("cd \"") + repoRoot + "\" && git config user.name \"" + ghUser + " (" + appSig + ")\"";
+            std::string cfgEmail = std::string("cd \"") + repoRoot + "\" && git config user.email \"" + ghUser + "@users.noreply.github.com\"";
+            std::system(cfgName.c_str());
+            std::system(cfgEmail.c_str());
+        }
         std::string https = std::string("https://") + token + "@github.com/" + remotePath + ".git";
 #ifdef _WIN32
         std::string cmdInitOnly = std::string("cd \"") + repoRoot + "\" && git init";
