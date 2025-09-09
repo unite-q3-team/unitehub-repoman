@@ -178,7 +178,13 @@ $(BUILD_DIR)/gui/%.o: src/gui/%.cpp | $(BUILD_DIR)
 $(BUILD_DIR)/gui/main_gui.o: $(FONT_HEADERS) $(ASSET_HEADERS)
 
 # Vendor ImGui objects
-$(BUILD_DIR)/vendor/%.o: %.cpp | $(BUILD_DIR) imgui_fetch
+# Map core ImGui sources
+$(BUILD_DIR)/vendor/third_party/imgui/%.o: $(IMGUIDIR)/%.cpp | $(BUILD_DIR) imgui_fetch
+	@$(MKDIR) $(dir $@)
+	$(CXX) $(CXXFLAGS) -Iinclude -I$(IMGUIDIR) -I$(IMGUIDIR)/backends -c $< -o $@
+
+# Map backend sources
+$(BUILD_DIR)/vendor/third_party/imgui/backends/%.o: $(IMGUIDIR)/backends/%.cpp | $(BUILD_DIR) imgui_fetch
 	@$(MKDIR) $(dir $@)
 	$(CXX) $(CXXFLAGS) -Iinclude -I$(IMGUIDIR) -I$(IMGUIDIR)/backends -c $< -o $@
 
