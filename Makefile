@@ -201,9 +201,9 @@ $(BUILD_DIR)/vendor/third_party/stb_image.o: third_party/stb_image.c | $(BUILD_D
 	@$(MKDIR) $(dir $@)
 	$(CXX) $(CXXFLAGS) -Ithird_party -c $< -o $@
 
-# Fetch Dear ImGui if missing
+# Fetch Dear ImGui if missing (supports submodule checkout where .git is a file)
 imgui_fetch:
-	@if [ ! -d "$(IMGUIDIR)/.git" ]; then \
+	@if [ ! -e "$(IMGUIDIR)/.git" ]; then \
 		echo "Fetching Dear ImGui..."; \
 		mkdir -p third_party; \
 		if [ -d "$(IMGUIDIR)" ]; then \
@@ -238,6 +238,13 @@ $(FONTS_GEN_DIR)/unispace_bd_it.h: $(FONTS_SRC_DIR)/Unispace\ Bd\ It.otf tools/o
 	@$(MKDIR) $(FONTS_GEN_DIR)
 	python3 tools/otf_to_header.py "$<" "$@" unispace_bd_it
 
+
+# Debug: show what object files are expected
+debug-gui-objects:
+	@echo "IMGUI_CORE: $(IMGUI_CORE)"
+	@echo "IMGUI_CORE_OBJECTS: $(IMGUI_CORE_OBJECTS)"
+	@echo "IMGUI_BACKEND_OBJECTS: $(IMGUI_BACKEND_OBJECTS)"
+	@echo "GUI_VENDOR_OBJECTS: $(GUI_VENDOR_OBJECTS)"
 
 # Debug build
 debug:
