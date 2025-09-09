@@ -140,7 +140,7 @@ GUI_LDLIBS := -lglfw -lGL -ldl -lpthread -lX11 -lXrandr -lXi -lXcursor -lXineram
 endif
 
 GUI_CPP_OBJECTS := $(GUI_CPP_SOURCES:src/gui/%.cpp=$(BUILD_DIR)/gui/%.o)
-GUI_VENDOR_OBJECTS := $(patsubst %.cpp,$(BUILD_DIR)/vendor/%.o,$(GUI_VENDOR_SOURCES)) $(BUILD_DIR)/vendor/third_party/stb_image.o
+GUI_VENDOR_OBJECTS := $(GUI_VENDOR_SOURCES:third_party/%.cpp=$(BUILD_DIR)/vendor/third_party/%.o) $(BUILD_DIR)/vendor/third_party/stb_image.o
 GUI_OBJECTS := $(GUI_CPP_OBJECTS) $(GUI_VENDOR_OBJECTS)
 GUI_TARGET := $(BUILD_DIR)/$(GUI_EXECUTABLE)
 GUI_DEPS := $(GUI_OBJECTS:.o=.d)
@@ -198,6 +198,10 @@ imgui_fetch:
 	@if [ ! -d "$(IMGUIDIR)/.git" ]; then \
 		echo "Fetching Dear ImGui..."; \
 		mkdir -p third_party; \
+		if [ -d "$(IMGUIDIR)" ]; then \
+			echo "Removing existing incomplete ImGui directory..."; \
+			rm -rf "$(IMGUIDIR)"; \
+		fi; \
 		git clone --depth 1 https://github.com/ocornut/imgui.git $(IMGUIDIR); \
 	fi
 
