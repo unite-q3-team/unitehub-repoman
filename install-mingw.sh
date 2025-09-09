@@ -9,6 +9,7 @@ if command -v apt-get &> /dev/null; then
     echo "Detected Ubuntu/Debian system"
     sudo apt-get update
     sudo apt-get install -y mingw-w64 gcc-mingw-w64-x86-64 gcc-mingw-w64-i686
+    sudo apt-get install -y libglfw3-dev xorg-dev libgl1-mesa-dev libpng-dev zlib1g-dev
     
 elif command -v dnf &> /dev/null; then
     # Fedora/CentOS/RHEL

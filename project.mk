@@ -8,7 +8,7 @@ PROJECT_NAME := RepoMan
 EXECUTABLE_NAME := repoman-cli
 
 # Project version
-PROJECT_VERSION := 0.0.1
+PROJECT_VERSION := 0.1.0
 
 # Project description
 PROJECT_DESCRIPTION := A simple cross-platform C++ CLI program

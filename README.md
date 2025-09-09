@@ -1,4 +1,4 @@
-## RepoMan CLI
+## RepoMan CLI/GUI (v0.1.0)
 
 Cross-platform C++ CLI to manage Quake 3 content repositories.
 
@@ -31,7 +31,7 @@ https://github.com/unite-q3-team/unitehub-repoman/releases
 - Install helper: `./install-mingw.sh`
 
 ### Runtime
-- Linux: none beyond glibc
+- Linux: none beyond glibc libglfw3-dev xorg-dev libgl1-mesa-dev libpng-dev zlib1g-dev
 - Windows: binaries are linked with static libstdc++/libgcc
 - For zip extraction: on Linux, Python 3 or `unzip`; on Windows, PowerShell (Expand-Archive)
 
@@ -71,8 +71,10 @@ make PLATFORM=windows
 ```
 
 ### Output locations
-- Linux: `build/linux/<arch>/<BuildType>/repoman-cli`
-- Windows: `build/windows/<arch>/<BuildType>/repoman-cli.exe`
+- Linux (CLI): `build/linux/<arch>/<BuildType>/repoman-cli`
+- Linux (GUI): `build/linux/<arch>/<BuildType>/repoman-gui`
+- Windows (CLI): `build/windows/<arch>/<BuildType>/repoman-cli.exe`
+- Windows (GUI): `build/windows/<arch>/<BuildType>/repoman-gui.exe`
 
 ## Usage
 
@@ -93,3 +95,7 @@ Notes:
 - Config `config.json` is stored next to the executable directory.
 - Temporary files for GitHub operations are created next to the executable.
 - ASCII-only paths are enforced; Unicode paths are not supported.
+
+### GUI
+- Cross-platform GUI is included. Run `repoman-gui` (Linux) or `repoman-gui.exe` (Windows).
+- GitHub integration (clone/pull/push), batch operations, tag editing, and compare with GitHub are available.

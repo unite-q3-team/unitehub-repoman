@@ -16,11 +16,12 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential
+          sudo apt-get install -y build-essential pkg-config libglfw3-dev
 
       - name: Build (Linux x64 Release) via Make
         run: |
           make PLATFORM=linux ARCH=x64 BUILD_TYPE=Release
+          make PLATFORM=linux ARCH=x64 BUILD_TYPE=Release gui
 
       - name: Prepare artifact
         run: |
@@ -28,6 +29,11 @@ jobs:
           cp build/linux/x64/Release/repoman-cli dist/repoman-cli-linux-x64
           strip dist/repoman-cli-linux-x64 || true
           (cd dist && sha256sum repoman-cli-linux-x64 > repoman-cli-linux-x64.sha256)
+          if [ -f build/linux/x64/Release/repoman-gui ]; then \
+            cp build/linux/x64/Release/repoman-gui dist/repoman-gui-linux-x64; \
+            strip dist/repoman-gui-linux-x64 || true; \
+            (cd dist && sha256sum repoman-gui-linux-x64 > repoman-gui-linux-x64.sha256); \
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -49,12 +55,17 @@ jobs:
       - name: Build (Windows x64 Release) via Make (cross)
         run: |
           make PLATFORM=windows ARCH=x64 BUILD_TYPE=Release CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++
+          make PLATFORM=windows ARCH=x64 BUILD_TYPE=Release gui CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++
 
       - name: Prepare artifact
         run: |
           mkdir -p dist
           cp build/windows/x64/Release/repoman-cli.exe dist/repoman-cli-windows-x64.exe
           (cd dist && sha256sum repoman-cli-windows-x64.exe > repoman-cli-windows-x64.exe.sha256)
+          if [ -f build/windows/x64/Release/repoman-gui.exe ]; then \
+            cp build/windows/x64/Release/repoman-gui.exe dist/repoman-gui-windows-x64.exe; \
+            (cd dist && sha256sum repoman-gui-windows-x64.exe > repoman-gui-windows-x64.exe.sha256); \
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -87,4 +98,8 @@ jobs:
             dist/repoman-cli-linux-x64.sha256
             dist/repoman-cli-windows-x64.exe
             dist/repoman-cli-windows-x64.exe.sha256
+            dist/repoman-gui-linux-x64
+            dist/repoman-gui-linux-x64.sha256
+            dist/repoman-gui-windows-x64.exe
+            dist/repoman-gui-windows-x64.exe.sha256
 

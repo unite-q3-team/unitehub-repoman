@@ -239,6 +239,8 @@ std::optional<std::string> RepoManager::addFile(const std::string& sourcePath,
         std::filesystem::create_directories(dest.parent_path());
         // Normalize Windows-style source path with backslashes preserved by parser
         std::filesystem::path srcPath(sourcePath);
+        // Remove destination first to avoid platform-specific EEXIST quirks
+        std::error_code ec_rm; std::filesystem::remove(dest, ec_rm);
         std::filesystem::copy_file(srcPath, dest, std::filesystem::copy_options::overwrite_existing);
 
         std::string sha = utils::computeFileSha256(dest.u8string());
@@ -326,6 +328,78 @@ bool RepoManager::renameItem(const std::string& itemId, const std::string& newNa
         return true;
     } catch (const std::exception& e) {
         logger::error(std::string("Rename item failed: ") + e.what());
+        return false;
+    }
+}
+
+bool RepoManager::moveItem(const std::string& itemId, const std::string& newRelativePath) {
+    try {
+        auto it = std::find_if(indexData.items.begin(), indexData.items.end(),
+                               [&itemId](const ContentItem& item) { return item.id == itemId; });
+        if (it == indexData.items.end()) {
+            logger::error("Item not found: " + itemId);
+            return false;
+        }
+        std::string normalized = utils::normalizeRelative(newRelativePath);
+        if (!utils::isSafeRelativePath(normalized)) {
+            logger::error("Unsafe relative path for move: " + newRelativePath);
+            return false;
+        }
+        if (!isAsciiString(normalized)) {
+            logger::error("Non-ASCII path not allowed for move: '" + normalized + "'");
+            return false;
+        }
+        std::filesystem::path oldAbs = std::filesystem::path(getStoragePath()) / std::filesystem::u8path(it->relativePath);
+        std::filesystem::path newAbs = std::filesystem::path(getStoragePath()) / std::filesystem::u8path(normalized);
+        std::error_code ec;
+        std::filesystem::create_directories(newAbs.parent_path(), ec);
+        ec.clear();
+        std::filesystem::rename(oldAbs, newAbs, ec);
+        if (ec) {
+            logger::error(std::string("Move failed: ") + ec.message());
+            return false;
+        }
+        it->relativePath = normalized;
+        it->updatedAt = static_cast<uint64_t>(
+            std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+        if (!saveIndex()) {
+            logger::error("Failed to save index after move");
+            return false;
+        }
+        return true;
+    } catch (const std::exception& e) {
+        logger::error(std::string("Move item failed: ") + e.what());
+        return false;
+    }
+}
+
+bool RepoManager::updateItemMetadata(const std::string& itemId,
+                            const std::string& newName,
+                            const std::string& newDescription,
+                            const std::string& newAuthor,
+                            const std::vector<std::string>& newTags) {
+    try {
+        auto it = std::find_if(indexData.items.begin(), indexData.items.end(),
+                               [&itemId](const ContentItem& item) { return item.id == itemId; });
+        if (it == indexData.items.end()) {
+            logger::error("Item not found: " + itemId);
+            return false;
+        }
+
+        if (!newName.empty()) it->name = newName;
+        it->description = newDescription;
+        it->author = newAuthor;
+        it->tags = newTags;
+        it->updatedAt = static_cast<uint64_t>(
+            std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+
+        if (!saveIndex()) {
+            logger::error("Failed to save index after metadata update");
+            return false;
+        }
+        return true;
+    } catch (const std::exception& e) {
+        logger::error(std::string("Update metadata failed: ") + e.what());
         return false;
     }
 }
